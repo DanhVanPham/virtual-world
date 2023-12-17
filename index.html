@@ -1,71 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Virtual World</title>
-		<link rel="stylesheet" href="styles.css" />
-	</head>
-	<body>
-		<h1>TNF 3.0 Editor</h1>
-		<canvas id="myCanvas"></canvas>
-		<div id="controls">
-			<button onclick="dispose()">🗑️</button>
-			<button onclick="save()">💾</button>
-		</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual World</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>TNF 3.0 Editor</h1>
+    <canvas id="myCanvas"></canvas>
+    <div id="controls">
+      <button onclick="dispose()">🗑️</button>
+      <button onclick="save()">💾</button>
+    </div>
 
-		<script src="js/world.js"></script>
-		<script src="js/viewport.js"></script>
-		<script src="js/math/utils.js"></script>
-		<script src="js/math/graph.js"></script>
-		<script src="js/math/graphEditor.js"></script>
-		<script src="js/primitives/point.js"></script>
-		<script src="js/primitives/segment.js"></script>
-		<script src="js/primitives/polygon.js"></script>
-		<script src="js/primitives/envelope.js"></script>
-		<script>
-			myCanvas.width = 600;
-			myCanvas.height = 600;
+    <script src="js/world.js"></script>
+    <script src="js/viewport.js"></script>
+    <script src="js/math/utils.js"></script>
+    <script src="js/math/graph.js"></script>
+    <script src="js/math/graphEditor.js"></script>
+    <script src="js/primitives/point.js"></script>
+    <script src="js/primitives/segment.js"></script>
+    <script src="js/primitives/polygon.js"></script>
+    <script src="js/primitives/envelope.js"></script>
+    <script>
+      myCanvas.width = 600;
+      myCanvas.height = 600;
 
-			const ctx = myCanvas.getContext("2d");
+      const ctx = myCanvas.getContext("2d");
 
-			const p1 = new Point(200, 200);
-			const p2 = new Point(500, 200);
-			const p3 = new Point(400, 400);
-			const p4 = new Point(100, 300);
+      const p1 = new Point(200, 200);
+      const p2 = new Point(500, 200);
+      const p3 = new Point(400, 400);
+      const p4 = new Point(100, 300);
 
-			const s1 = new Segment(p1, p2);
-			const s2 = new Segment(p2, p3);
-			const s3 = new Segment(p4, p4);
-			const s4 = new Segment(p1, p3);
-			const s5 = new Segment(p1, p4);
+      const s1 = new Segment(p1, p2);
+      const s2 = new Segment(p2, p3);
+      const s3 = new Segment(p4, p4);
+      const s4 = new Segment(p1, p3);
+      const s5 = new Segment(p1, p4);
 
-			const graphInfo = JSON.parse(localStorage.getItem("graph"));
-			const graph = graphInfo ? Graph.load(graphInfo) : new Graph();
-			const world = new World(graph);
+      const graphInfo = JSON.parse(localStorage.getItem("graph"));
+      // graphInfo ? Graph.load(graphInfo) :
+      const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3, s4]);
+      const world = new World(graph);
 
-			const viewport = new Viewport(myCanvas);
-			const graphEditor = new GraphEditor(viewport, graph);
+      const viewport = new Viewport(myCanvas);
+      const graphEditor = new GraphEditor(viewport, graph);
 
-			animate();
+      animate();
 
-			function animate() {
-				viewport.reset();
-				world.generate();
-				world.draw(ctx);
-				graphEditor.display();
-				// new Envelope(graph.segments[0], 200, 20).draw(ctx);
-				// new Polygon(graph.points).draw(ctx);
-				requestAnimationFrame(animate);
-			}
+      function animate() {
+        viewport.reset();
+        world.generate();
+        world.draw(ctx);
+        ctx.globalAlpha = 0.3;
+        graphEditor.display();
+        // new Envelope(graph.segments[0], 200, 20).draw(ctx);
+        // new Polygon(graph.points).draw(ctx);
+        requestAnimationFrame(animate);
+      }
 
-			function dispose() {
-				graphEditor.dispose();
-			}
+      function dispose() {
+        graphEditor.dispose();
+      }
 
-			function save() {
-				localStorage.setItem("graph", JSON.stringify(graph));
-			}
-		</script>
-	</body>
+      function save() {
+        localStorage.setItem("graph", JSON.stringify(graph));
+      }
+    </script>
+  </body>
 </html>
